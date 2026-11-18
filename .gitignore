@@ -1,0 +1,13 @@
+# Virtual environment (recreate with: python -m venv .venv)
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Streamlit secrets (never commit credentials)
+.streamlit/secrets.toml
+
+# OS artifacts
+Thumbs.db
+.DS_Store
