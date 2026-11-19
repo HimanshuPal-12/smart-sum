@@ -1,0 +1,11 @@
+Eyes Above the Sky: Why Space Telescopes Matter
+
+Stars twinkle because Earth's atmosphere constantly bends their light, and that gentle shimmer is charming for poets but maddening for astronomers. Placing telescopes above the atmosphere removes the distortion entirely, letting instruments record sharp images of faint and distant objects that ground observatories can only see as blur.
+
+Space observatories can also see colors of light that the air blocks. Infrared radiation, which is essentially heat, is absorbed by the atmosphere before it reaches the ground, yet it carries clues about cool stars, dusty nebulae where planets form, and galaxies so far away that their light has stretched toward the red end of the spectrum during billions of years of travel.
+
+The results have reshaped astronomy. Space telescopes have measured the expansion of the universe, watched dusty planetary systems being born, and captured light from galaxies that formed soon after the universe began. By studying the tiny dip in brightness when a planet crosses in front of its star, and by splitting that light into its component colors, researchers can even estimate the composition of exoplanet atmospheres, searching for the chemical signatures of water and methane.
+
+Missions of this scale are beyond any single research group. Space telescopes are typically built by international consortia, with mirrors polished in one country, instruments assembled in another, and launches contracted from a third. The raw observations are usually archived and opened to the public after a short exclusive period, so a student with a laptop can analyze the same data as a professional observatory team. Amateur astronomers have sometimes earned co-authorship on published papers by finding anomalies in these public archives.
+
+The next generation of instruments promises still larger mirrors and sharper sensitivity. Each technical step upward has historically produced surprises nobody requested and nobody expected, from the accelerating expansion of the universe to planets around ordinary stars. The sky above the sky, astronomers like to say, has never once run out of news.

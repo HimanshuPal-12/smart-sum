@@ -42,9 +42,9 @@ length_controlled_summarization/
 |-- requirements.txt       # Python dependencies
 |-- README.md              # This file
 |-- demo_check.py          # One-off script that prints example results
-|-- sample_data/
-|   |-- sample_article.txt        # Demo article
-|   |-- reference_summary.txt     # Optional human summary, for ROUGE demo
+|-- sample_data/            # Demo dataset (articles + references, see next section)
+|   |-- articles/           # 9 sample articles: 01_education ... 09_history
+|   `-- references/         # Matching human-written reference summaries
 |-- tests/
     |-- test_summarizer.py        # Acceptance tests (T1-T10 core checks)
 ```
@@ -94,14 +94,40 @@ The browser opens at `http://localhost:8501`. Paste an article (or upload a
   manual review checklist (names, dates, numbers, key claims, negations,
   unsupported statements). Manual review is required.
 
-## Sample use
+## Sample dataset (9 articles + references)
 
-1. Run the app (`streamlit run app.py`).
-2. Open `sample_data/sample_article.txt`, copy its contents, and paste them
-   into "Paste your article".
-3. (Optional) paste `sample_data/reference_summary.txt` into the reference
-   box to see ROUGE scores.
-4. Press **Generate summaries** and compare the 20%, 40%, and 60% results.
+`sample_data/` contains nine short original articles on varied topics -
+education, health, environment, business, technology, science, sports,
+culture, and history - plus a human-written reference summary (about 40%
+of the article length) for each, used for ROUGE evaluation.
+
+All articles and reference summaries were written by the project team for
+demonstration purposes; there is no third-party copyright material, and the
+dataset is intentionally small. It is used for testing and demonstration
+only - the sentence-embedding model is pretrained and is never trained or
+fine-tuned on this data.
+
+Measured results at the 40% level (`python demo_check.py`,
+model `bert-base-nli-mean-tokens`, measured on 19 Nov 2026):
+
+| Topic | Words | Achieved % | ROUGE-1 | ROUGE-2 | ROUGE-L | Flesch |
+|---|---|---|---|---|---|---|
+| Education | 345 | 39.7% | 52.1 | 17.3 | 30.7 | 29.9 |
+| Health | 319 | 37.3% | 53.1 | 33.0 | 41.5 | 44.8 |
+| Environment | 329 | 39.5% | 42.7 | 16.5 | 32.0 | 33.2 |
+| Business | 307 | 38.8% | 50.6 | 16.7 | 39.2 | 36.0 |
+| Technology | 368 | 39.7% | 55.6 | 20.5 | 34.6 | 39.2 |
+| Science | 329 | 39.8% | 46.5 | 18.2 | 31.2 | 32.2 |
+| Sports | 324 | 37.7% | 55.5 | 28.0 | 43.4 | 34.4 |
+| Culture | 297 | 38.7% | 64.1 | 34.8 | 50.0 | 30.0 |
+| History | 311 | 36.3% | 52.2 | 20.0 | 35.3 | 48.4 |
+| **Average** | **325** | **38.6%** | **52.5** | **22.8** | **37.5** | **36.5** |
+
+("Achieved %" is the actual summary length as a percentage of the original
+article when targeting 40%.) ROUGE numbers measure word overlap with the
+reference summaries; they are not proof of factual accuracy. To try a
+sample in the app, choose one from the "Try a sample article" dropdown and
+press **Load sample** - this fills both the article and the reference box.
 
 ## Tests
 
@@ -116,7 +142,10 @@ only of source sentences (T1), increasing budgets/lengths (T2), restored
 source order (T3), empty input (T4), one-sentence input (T5), budgets too
 small for any sentence (T6), UTF-8 `.txt` readability (T7), ROUGE without a
 reference (T8), ROUGE with a reference (T9), and a friendly model-loading
-error (T10). The first run downloads the model, so it needs internet access.
+error (T10). A dataset-wide check also generates summaries for **all nine
+sample articles** at all three levels and computes ROUGE against each
+article's reference. The first run downloads the model, so it needs
+internet access.
 
 ## Limitations
 

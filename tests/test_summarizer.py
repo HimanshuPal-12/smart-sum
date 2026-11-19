@@ -23,7 +23,8 @@ from summarizer import (  # noqa: E402
     summarize_to_ratio,
 )
 
-SAMPLE_ARTICLE_PATH = os.path.join(PROJECT_ROOT, "sample_data", "sample_article.txt")
+ARTICLES_DIR = os.path.join(PROJECT_ROOT, "sample_data", "articles")
+REFERENCES_DIR = os.path.join(PROJECT_ROOT, "sample_data", "references")
 
 # A short text where no complete sentence can fit a 20% word budget
 # (2 sentences, 35 words total -> 20% budget = 7 words).
@@ -37,9 +38,25 @@ SHORT_BUDGET_TEXT = (
 ONE_SENTENCE_TEXT = "This single sentence is the entire document."
 
 
-def _sample_article():
-    with open(SAMPLE_ARTICLE_PATH, encoding="utf-8") as handle:
+def _dataset_pairs():
+    """All (article_path, reference_path) pairs in the sample dataset."""
+    pairs = []
+    for name in sorted(os.listdir(ARTICLES_DIR)):
+        if not name.endswith(".txt"):
+            continue
+        reference_path = os.path.join(REFERENCES_DIR, name)
+        if os.path.isfile(reference_path):
+            pairs.append((os.path.join(ARTICLES_DIR, name), reference_path))
+    return pairs
+
+
+def _read_text(path):
+    with open(path, encoding="utf-8") as handle:
         return handle.read()
+
+
+def _sample_article():
+    return _read_text(_dataset_pairs()[0][0])
 
 
 # ---------- evaluation.word_count (consistent rule) ----------
@@ -51,13 +68,13 @@ def test_word_count_rule():
 
 # ---------- T7: sample .txt files are readable UTF-8 ----------
 def test_t7_sample_txt_files_readable():
-    article = _sample_article()
-    assert word_count(article) > 100
-    with open(
-        os.path.join(PROJECT_ROOT, "sample_data", "reference_summary.txt"),
-        encoding="utf-8",
-    ) as handle:
-        assert len(handle.read().split()) > 10
+    pairs = _dataset_pairs()
+    assert len(pairs) >= 5, "the dataset should contain at least 5 article/reference pairs"
+    for article_path, reference_path in pairs:
+        article = _read_text(article_path)
+        assert word_count(article) > 100, f"article too short: {article_path}"
+        reference = _read_text(reference_path)
+        assert len(reference.split()) > 10, f"reference too short: {reference_path}"
 
 
 # ---------- T1: normal article -> non-empty summaries of source sentences ----------
@@ -72,6 +89,31 @@ def test_t1_normal_article():
             assert sentence in source_sentences, (
                 f"summary contains a sentence that is not in the source: {sentence!r}"
             )
+
+
+# ---------- T1 (dataset-wide): every sample article, every ratio ----------
+def test_t1_all_dataset_articles():
+    model = load_model()
+    for article_path, reference_path in _dataset_pairs():
+        text = _read_text(article_path)
+        source_sentences = set(split_into_sentences(text))
+        previous_words = 0
+        result_40 = None
+        for ratio in (0.2, 0.4, 0.6):
+            result = summarize_to_ratio(text, ratio, model)
+            if ratio == 0.4:
+                result_40 = result
+            assert result["summary"], f"empty summary for {article_path} at ratio {ratio}"
+            for sentence in split_into_sentences(result["summary"]):
+                assert sentence in source_sentences, (
+                    f"non-source sentence in {article_path}: {sentence!r}"
+                )
+            assert result["actual_words"] >= previous_words
+            previous_words = result["actual_words"]
+        # ROUGE must compute against each article's own reference summary.
+        scores = rouge_scores(result_40["summary"], _read_text(reference_path))
+        assert scores is not None, f"ROUGE returned None despite a reference: {reference_path}"
+        assert all(0.0 <= value <= 100.0 for value in scores.values())
 
 
 # ---------- T2: target budgets increase; actual lengths grow ----------
