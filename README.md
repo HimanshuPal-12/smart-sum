@@ -1,9 +1,38 @@
 # SmartSum - Length-Controlled Text Summarization with Information Preservation
 
-A simple NLP class project (Himanshu Pal and Umesh). The app creates
+A simple NLP class project (Himanshu Pal and Umesh Mamgai). The app creates
 extractive summaries at **20%, 40%, and 60%** of the original article length
 using a pretrained BERT sentence embedding model. No model training, no paid
 APIs - just a clear, explainable pipeline.
+
+## Team and work split
+
+**Himanshu Pal**
+
+- Core summarization pipeline (`summarizer.py`): sentence splitting, BERT
+  sentence embeddings, document centroid, and cosine-similarity ranking
+- Length control: word-budget selection of complete sentences and
+  restoration of original sentence order
+- Project setup: Python environment, pinned `requirements.txt`, and the
+  Git/GitHub repository
+
+**Umesh Mamgai**
+
+- Evaluation module (`evaluation.py`): word counts, Flesch Reading Ease,
+  and ROUGE scoring against reference summaries
+- Streamlit interface (`app.py`): article input and file upload,
+  sample-article dropdown, side-by-side summary display, and the manual
+  factual-review checklist
+- Sample dataset and tests: the nine articles and reference summaries in
+  `sample_data/`, plus the acceptance tests in `tests/test_summarizer.py`
+
+**Joint work (both members)**
+
+- Project idea and algorithm selection (extractive, centrality-based
+  summarization)
+- Code review of each other's modules and verification of the measured
+  results reported in this README
+- Report writing and viva preparation
 
 ## How it works (algorithm)
 
